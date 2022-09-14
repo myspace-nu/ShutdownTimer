@@ -1,3 +1,5 @@
+![ShutdownTimer](./Assets/ShutdownTimer.png)
+
 # ShutdownTimer
 
 A simple shutdown timer using .NET Framework 2.0 and no additional dependencies. Works on pretty much any Windows version.
