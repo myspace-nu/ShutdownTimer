@@ -23,14 +23,26 @@ namespace ShutdownTimer
         {
             InitializeComponent();
             args = new CommandLineParameters();
+            args.loadFromFile();
             if (args.exists("width"))
                 int.TryParse(args.get("width"), out windowWidth);
-            windowWidth = Math.Min(1000, Math.Max(200, windowWidth));
+            windowWidth = Math.Min(1000, Math.Max(260, windowWidth));
             if (args.exists("height"))
                 int.TryParse(args.get("height"), out windowHeight);
-            windowHeight = Math.Min(1000, Math.Max(100, windowHeight));
+            windowHeight = Math.Min(1000, Math.Max(90, windowHeight));
             if (args.exists("timer"))
-                double.TryParse(args.get("timer"), out ShutdownTime);
+            {
+                string[] timeArr = args.get("timer").Split(':');
+                Array.Reverse(timeArr);
+                double[] mul = new double[] { 1, 60, 60*60 };
+                ShutdownTime = 0;
+                for (int i=0; i<timeArr.Length && i<mul.Length; i++)
+                {
+                    double t = 0;
+                    double.TryParse(timeArr[i], out t);
+                    ShutdownTime += t * mul[i];
+                }
+            }
             ShutdownTime = (Math.Floor(ShutdownTime) > 0) ? Math.Floor(ShutdownTime) : 60;
             timerlabel.Text = TimeSpan.FromSeconds(ShutdownTime).ToString();
             timerprogress.Text = "";
@@ -44,6 +56,11 @@ namespace ShutdownTimer
 
         private void ShutdownTimer_Shown(object sender, EventArgs e)
         {
+            if (args.exists("save"))
+            {
+                args.remove("save");
+                args.saveToFile();
+            }
             this.Width = windowWidth;
             this.Height = windowHeight;
             timerprogress.Top = (int)(this.ClientSize.Height - progressHeight);
