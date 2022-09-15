@@ -1,4 +1,4 @@
-﻿namespace ShutdownTimer
+namespace ShutdownTimer
 {
     partial class ShutdownTimerForm
     {
@@ -39,6 +39,7 @@
             // 
             this.timerlabel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.timerlabel.AutoSize = true;
+            this.timerlabel.BackColor = System.Drawing.Color.Transparent;
             this.timerlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.timerlabel.ForeColor = System.Drawing.Color.White;
             this.timerlabel.Location = new System.Drawing.Point(46, 41);

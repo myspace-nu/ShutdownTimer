@@ -17,6 +17,8 @@ namespace ShutdownTimer
         int progressWidth = 0;
         int windowWidth = 320;
         int windowHeight = 180;
+        int fontSize = 36;
+        string font = "Microsoft Sans Serif";
         DateTime StartTime;
         System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
         public ShutdownTimerForm()
@@ -30,6 +32,11 @@ namespace ShutdownTimer
             if (args.exists("height"))
                 int.TryParse(args.get("height"), out windowHeight);
             windowHeight = Math.Min(1000, Math.Max(90, windowHeight));
+            if (args.exists("fontsize"))
+                int.TryParse(args.get("fontsize"), out fontSize);
+            fontSize = Math.Min(100, Math.Max(3, fontSize));
+            if (args.exists("font"))
+                font = args.get("font");
             if (args.exists("timer"))
             {
                 string[] timeArr = args.get("timer").Split(':');
@@ -56,13 +63,16 @@ namespace ShutdownTimer
 
         private void ShutdownTimer_Shown(object sender, EventArgs e)
         {
-            if (args.exists("save"))
+            if (args.exists("saveconfig"))
             {
-                args.remove("save");
+                args.remove("saveconfig");
                 args.saveToFile();
             }
             this.Width = windowWidth;
             this.Height = windowHeight;
+            timerlabel.Font = new Font(font, fontSize);
+            timerlabel.Top = (int)(this.ClientSize.Height / 2) - (timerlabel.Height / 2);
+            timerlabel.Left = (int)(this.ClientSize.Width / 2) - (timerlabel.Width / 2);
             timerprogress.Top = (int)(this.ClientSize.Height - progressHeight);
             progressWidth = (int)this.ClientSize.Width;
             timerprogress.Width = progressWidth;

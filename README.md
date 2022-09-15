@@ -20,5 +20,7 @@ ShutdownTimer.exe --timer 120
   ShutdownTimer --width                Width of the main window (in pixels)
   ShutdownTimer --height               Height of the main window (in pixels)
   ShutdownTimer --background Teal      Background color of the main window, i.e. "Red" or "#ff0000"
-  ShutdownTimer --save                 Save settings to ShutdownTimer.default in current directory
+  ShutdownTimer --font "Consolas"      Timer font
+  ShutdownTimer --fontsize 40          Timer fontsize
+  ShutdownTimer --saveconfig           Save settings to ShutdownTimer.default in current directory
 ```
