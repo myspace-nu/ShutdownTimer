@@ -15,14 +15,22 @@ namespace ShutdownTimer
         double ShutdownTime = 60;
         int progressHeight = 5;
         int progressWidth = 0;
+        int windowWidth = 320;
+        int windowHeight = 180;
         DateTime StartTime;
         System.Diagnostics.Stopwatch StopWatch = new System.Diagnostics.Stopwatch();
         public ShutdownTimerForm()
         {
             InitializeComponent();
             args = new CommandLineParameters();
-            if (args.exists("-timer"))
-                double.TryParse(args.get("-timer"), out ShutdownTime);
+            if (args.exists("width"))
+                int.TryParse(args.get("width"), out windowWidth);
+            windowWidth = Math.Min(1000, Math.Max(200, windowWidth));
+            if (args.exists("height"))
+                int.TryParse(args.get("height"), out windowHeight);
+            windowHeight = Math.Min(1000, Math.Max(100, windowHeight));
+            if (args.exists("timer"))
+                double.TryParse(args.get("timer"), out ShutdownTime);
             ShutdownTime = (Math.Floor(ShutdownTime) > 0) ? Math.Floor(ShutdownTime) : 60;
             timerlabel.Text = TimeSpan.FromSeconds(ShutdownTime).ToString();
             timerprogress.Text = "";
@@ -36,11 +44,36 @@ namespace ShutdownTimer
 
         private void ShutdownTimer_Shown(object sender, EventArgs e)
         {
+            this.Width = windowWidth;
+            this.Height = windowHeight;
             timerprogress.Top = (int)(this.ClientSize.Height - progressHeight);
-            progressWidth = (int)this.ClientSize.Width; // ShutdownTimerForm.ActiveForm.Width
+            progressWidth = (int)this.ClientSize.Width;
             timerprogress.Width = progressWidth;
-            timerprogress.Visible = !args.exists("-noprogress");
-            pauseButton.Visible = !args.exists("-nopause");
+            timerprogress.Visible = !args.exists("noprogress");
+            pauseButton.Visible = !args.exists("nopause");
+            pauseButton.Left = (int)(this.ClientSize.Width - (pauseButton.Width + 5));
+            pauseButton.Top = (int)(this.ClientSize.Height - (pauseButton.Height + 5 + ((timerprogress.Visible) ? progressHeight : 0)));
+            if (args.exists("background"))
+            {
+                try
+                {
+                    string color = args.get("background");
+                    if (color.StartsWith("#"))
+                    {
+                        color = color.TrimStart('#');
+                        int r = Convert.ToInt32(color.Substring(0, 2), 16);
+                        int g = Convert.ToInt32(color.Substring(2, 2), 16);
+                        int b = Convert.ToInt32(color.Substring(4, 2), 16);
+                        this.BackColor = System.Drawing.Color.FromArgb(r, g, b);
+                    }
+                    else
+                    {
+                        this.BackColor = System.Drawing.Color.FromName(color);
+                    }
+                }
+                catch { }
+            }
+
         }
         private void timer1_Tick(object sender, EventArgs e)
         {

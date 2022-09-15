@@ -41,7 +41,7 @@
             this.timerlabel.AutoSize = true;
             this.timerlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.timerlabel.ForeColor = System.Drawing.Color.White;
-            this.timerlabel.Location = new System.Drawing.Point(46, 43);
+            this.timerlabel.Location = new System.Drawing.Point(46, 28);
             this.timerlabel.Margin = new System.Windows.Forms.Padding(0);
             this.timerlabel.Name = "timerlabel";
             this.timerlabel.Size = new System.Drawing.Size(212, 55);
@@ -59,7 +59,7 @@
             this.timerprogress.BackColor = System.Drawing.Color.White;
             this.timerprogress.Location = new System.Drawing.Point(0, 128);
             this.timerprogress.Name = "timerprogress";
-            this.timerprogress.Size = new System.Drawing.Size(250, 13);
+            this.timerprogress.Size = new System.Drawing.Size(304, 13);
             this.timerprogress.TabIndex = 1;
             this.timerprogress.Text = "100%";
             this.timerprogress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
