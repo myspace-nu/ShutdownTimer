@@ -49,6 +49,8 @@ namespace ShutdownTimer
                     double.TryParse(timeArr[i], out t);
                     ShutdownTime += t * mul[i];
                 }
+            } else if (args.exists("at")) {
+                ShutdownTime = (double)GetSecondsUntilTime(args.get("at"));
             }
             ShutdownTime = (Math.Floor(ShutdownTime) > 0) ? Math.Floor(ShutdownTime) : 60;
             timerlabel.Text = TimeSpan.FromSeconds(ShutdownTime).ToString();
@@ -80,6 +82,14 @@ namespace ShutdownTimer
             pauseButton.Visible = !args.exists("nopause");
             pauseButton.Left = (int)(this.ClientSize.Width - (pauseButton.Width + 5));
             pauseButton.Top = (int)(this.ClientSize.Height - (pauseButton.Height + 5 + ((timerprogress.Visible) ? progressHeight : 0)));
+            if (args.exists("reboot")){
+                actionlabel.Text = "Reboot in";
+            } else {
+                actionlabel.Text = "Shutdown in";
+            }
+            actionlabel.Font = new Font(font, fontSize / 2);
+            actionlabel.Top = (int)(this.ClientSize.Height / 2) - (actionlabel.Height / 2) - (int)(timerlabel.Height / 1.5);
+            actionlabel.Left = (int)(this.ClientSize.Width / 2) - (actionlabel.Width / 2);
             if (args.exists("background"))
             {
                 try
@@ -114,7 +124,7 @@ namespace ShutdownTimer
                 timer1.Stop();
                 timer1.Enabled = false;
                 StopWatch.Stop();
-                Shutdown(args.exists("-reboot"));
+                Shutdown(args.exists("reboot"));
             }
         }
         private void pauseButton_Click(object sender, EventArgs e)
@@ -128,6 +138,18 @@ namespace ShutdownTimer
                 StopWatch.Start();
                 pauseButton.Text = ";";
             }
+        }
+        private int GetSecondsUntilTime(string timeString)
+        {
+            TimeSpan targetTime = TimeSpan.Parse(timeString);
+            TimeSpan currentTime = DateTime.Now.TimeOfDay;
+            TimeSpan timeDifference;
+            if (targetTime > currentTime) {
+                timeDifference = targetTime - currentTime;
+            } else {
+                timeDifference = (TimeSpan.FromHours(24) - currentTime) + targetTime;
+            }
+            return (int)timeDifference.TotalSeconds;
         }
         void Shutdown(bool reboot = false)
         {

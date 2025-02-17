@@ -33,6 +33,7 @@ namespace ShutdownTimer
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timerprogress = new System.Windows.Forms.Label();
             this.pauseButton = new System.Windows.Forms.Button();
+            this.actionlabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // timerlabel
@@ -79,12 +80,28 @@ namespace ShutdownTimer
             this.pauseButton.UseVisualStyleBackColor = false;
             this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
             // 
+            // actionlabel
+            // 
+            this.actionlabel.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.actionlabel.AutoSize = true;
+            this.actionlabel.BackColor = System.Drawing.Color.Transparent;
+            this.actionlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.actionlabel.ForeColor = System.Drawing.Color.White;
+            this.actionlabel.Location = new System.Drawing.Point(82, 15);
+            this.actionlabel.Margin = new System.Windows.Forms.Padding(0);
+            this.actionlabel.Name = "actionlabel";
+            this.actionlabel.Size = new System.Drawing.Size(133, 26);
+            this.actionlabel.TabIndex = 3;
+            this.actionlabel.Text = "Shutdown at";
+            this.actionlabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // ShutdownTimerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Red;
             this.ClientSize = new System.Drawing.Size(304, 141);
+            this.Controls.Add(this.actionlabel);
             this.Controls.Add(this.pauseButton);
             this.Controls.Add(this.timerprogress);
             this.Controls.Add(this.timerlabel);
@@ -103,6 +120,7 @@ namespace ShutdownTimer
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label timerprogress;
         private System.Windows.Forms.Button pauseButton;
+        private System.Windows.Forms.Label actionlabel;
     }
 }
 

@@ -13,7 +13,8 @@ ShutdownTimer.exe --timer 120
 ## Options
 
 ```
-  ShutdownTimer --timer 120            Set shutdown timer in seconds or hh:mm:ss
+  ShutdownTimer --timer 120            Set shutdown timer in seconds or hh:mm:ss from now
+  ShutdownTimer --at 17:00:00          Set shutdown at time hh:mm:ss
   ShutdownTimer --noprogress           Hide progress bar
   ShutdownTimer --nopause              Hide pause button
   ShutdownTimer --reboot               Reboot rather than shutdown
