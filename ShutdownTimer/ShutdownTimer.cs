@@ -12,6 +12,7 @@ namespace ShutdownTimer
     public partial class ShutdownTimerForm : Form
     {
         CommandLineParameters args;
+        string action = (IsWindowsServer()) ? "reboot" : "shutdown";
         double ShutdownTime = 60;
         int progressHeight = 5;
         int progressWidth = 0;
@@ -26,32 +27,43 @@ namespace ShutdownTimer
             InitializeComponent();
             args = new CommandLineParameters();
             args.loadFromFile();
-            if (args.exists("width"))
-                int.TryParse(args.get("width"), out windowWidth);
-            windowWidth = Math.Min(1000, Math.Max(260, windowWidth));
-            if (args.exists("height"))
-                int.TryParse(args.get("height"), out windowHeight);
-            windowHeight = Math.Min(1000, Math.Max(90, windowHeight));
-            if (args.exists("fontsize"))
-                int.TryParse(args.get("fontsize"), out fontSize);
-            fontSize = Math.Min(100, Math.Max(3, fontSize));
-            if (args.exists("font"))
-                font = args.get("font");
-            if (args.exists("timer"))
-            {
-                string[] timeArr = args.get("timer").Split(':');
-                Array.Reverse(timeArr);
-                double[] mul = new double[] { 1, 60, 60*60 };
-                ShutdownTime = 0;
-                for (int i=0; i<timeArr.Length && i<mul.Length; i++)
+            try {
+                action = (args.exists("reboot")) ? "reboot" :
+                    (args.exists("shutdown")) ? "shutdown" :
+                    action;
+                if (args.exists("width"))
+                    int.TryParse(args.get("width"), out windowWidth);
+                windowWidth = Math.Min(1000, Math.Max(260, windowWidth));
+                if (args.exists("height"))
+                    int.TryParse(args.get("height"), out windowHeight);
+                windowHeight = Math.Min(1000, Math.Max(90, windowHeight));
+                if (args.exists("fontsize"))
+                    int.TryParse(args.get("fontsize"), out fontSize);
+                fontSize = Math.Min(100, Math.Max(3, fontSize));
+                if (args.exists("font"))
+                    font = args.get("font");
+                if (args.exists("timer"))
                 {
-                    double t = 0;
-                    double.TryParse(timeArr[i], out t);
-                    ShutdownTime += t * mul[i];
+                    string[] timeArr = args.get("timer").Split(':');
+                    Array.Reverse(timeArr);
+                    double[] mul = new double[] { 1, 60, 60 * 60 };
+                    ShutdownTime = 0;
+                    for (int i = 0; i < timeArr.Length && i < mul.Length; i++)
+                    {
+                        double t = 0;
+                        double.TryParse(timeArr[i], out t);
+                        ShutdownTime += t * mul[i];
+                    }
                 }
-            } else if (args.exists("at")) {
-                ShutdownTime = (double)GetSecondsUntilTime(args.get("at"));
+                else if (args.exists("at"))
+                {
+                    ShutdownTime = (double)GetSecondsUntilTime(args.get("at"));
+                }
+            } catch(Exception err) {
+                MessageBox.Show("Fel vid tolkning av parametrar.\n"+err.Message);
+                Environment.Exit(1);
             }
+
             ShutdownTime = (Math.Floor(ShutdownTime) > 0) ? Math.Floor(ShutdownTime) : 60;
             timerlabel.Text = TimeSpan.FromSeconds(ShutdownTime).ToString();
             timerprogress.Text = "";
@@ -82,13 +94,13 @@ namespace ShutdownTimer
             pauseButton.Visible = !args.exists("nopause");
             pauseButton.Left = (int)(this.ClientSize.Width - (pauseButton.Width + 5));
             pauseButton.Top = (int)(this.ClientSize.Height - (pauseButton.Height + 5 + ((timerprogress.Visible) ? progressHeight : 0)));
-            if (args.exists("reboot")){
+            if (action == "reboot"){
                 actionlabel.Text = "Reboot in";
             } else {
                 actionlabel.Text = "Shutdown in";
             }
             actionlabel.Font = new Font(font, fontSize / 2);
-            actionlabel.Top = (int)(this.ClientSize.Height / 2) - (actionlabel.Height / 2) - (int)(timerlabel.Height / 1.5);
+            actionlabel.Top = timerlabel.Top - actionlabel.Height + (int)(actionlabel.Height * 0.2);
             actionlabel.Left = (int)(this.ClientSize.Width / 2) - (actionlabel.Width / 2);
             if (args.exists("background"))
             {
@@ -124,7 +136,7 @@ namespace ShutdownTimer
                 timer1.Stop();
                 timer1.Enabled = false;
                 StopWatch.Stop();
-                Shutdown(args.exists("reboot"));
+                Shutdown(action=="reboot");
             }
         }
         private void pauseButton_Click(object sender, EventArgs e)
@@ -151,6 +163,18 @@ namespace ShutdownTimer
             }
             return (int)timeDifference.TotalSeconds;
         }
+        private static bool IsWindowsServer()
+        {
+            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem"))
+            {
+                foreach (var os in searcher.Get())
+                {
+                    return os["ProductType"].ToString() != "1"; // 1 = Workstation, 2 or 3 = Server
+                }
+            }
+            return false;
+        }
+
         void Shutdown(bool reboot = false)
         {
             ManagementBaseObject mboShutdown = null;
